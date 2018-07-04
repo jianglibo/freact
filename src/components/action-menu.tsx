@@ -5,6 +5,7 @@ import ActionMenuProps from "../datashape/action-menu-props";
 export default class ActionMenu extends React.Component<ActionMenuProps, {}> {
   constructor(props: ActionMenuProps) {
     super(props);
+    this.linkClicked = this.linkClicked.bind(this);
   }
 
   public render() {
@@ -13,9 +14,13 @@ export default class ActionMenu extends React.Component<ActionMenuProps, {}> {
         {this.props.menuDescription.icon && (
           <i className={this.props.menuDescription.icon} />
         )}
-        <a href={this.calcHref()}>{this.props.menuDescription.name}</a>
+        <a href={this.calcHref()} onClick={this.linkClicked}>{this.props.menuDescription.name}</a>
       </button>
     );
+  }
+
+  private linkClicked(e: React.SyntheticEvent) {
+    this.props.actionBtnClicked(this.props.menuDescription, e);
   }
 
   private calcClass(): string {
@@ -39,7 +44,12 @@ export default class ActionMenu extends React.Component<ActionMenuProps, {}> {
     }
     return cname;
   }
-
+  /**
+   * GET ./create
+   * POST ./
+   * GET ./1/edit
+   * PUT ./1
+   */
   private calcHref(): string {
     let href = "#";
     const md = this.props.menuDescription;
