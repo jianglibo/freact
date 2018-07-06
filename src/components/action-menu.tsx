@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ActiveWhen } from "../datashape/action-menu-description";
 import ActionMenuProps from "../datashape/action-menu-props";
-
+import { StrUtil } from "../util/str-util"
 export default class ActionMenu extends React.Component<ActionMenuProps, {}> {
   constructor(props: ActionMenuProps) {
     super(props);
@@ -60,7 +60,7 @@ export default class ActionMenu extends React.Component<ActionMenuProps, {}> {
         break;
       case "edit":
         if (items.length === 1) {
-          href = this.props.baseUrl + "/" + items[0].id + "/edit/";
+          href = `${this.props.baseUrl}/${StrUtil.keepTrailingNumber(items[0].id.toString())}/edit`;
         }
       default:
         break;
