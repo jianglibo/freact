@@ -8,7 +8,7 @@ export default class ActionMenuDescription {
   constructor(
     public actionId: string,
     public name?: string,
-    public onClick?: () => void,
+    public onClick?: () => void | null,
     public icon?: string,
     public activeOn?: ActiveWhen
   ) {

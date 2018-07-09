@@ -7,6 +7,7 @@ import "./index.css";
 // import registerServiceWorker from "./registerServiceWorker";
 
 // import { jQuery } from "jquery";
+import { pureCombo } from './util/pure-combo';
 (window as any).showHello = "showHello";
 (window as any).jQuery = jQuery;
 // window.alert((window as any)['abc']);
@@ -32,6 +33,8 @@ import "./index.css";
 // const x: string|number = 1;
 
 (window as any).freact = {};
+
+(window as any).freact.pureCombo = pureCombo;
 (window as any).freact.renderActionMenuBar = (baseUrl:string, tableContainerCss: string, mds: Array<ActionMenuDescription|string>) => {
     const mdobs = mds.map(md => {
       if (typeof md === "string") {

@@ -14,3 +14,8 @@ it('can handle string interpolation', () => {
     const s = `a${o.oo.a}b`;
     expect(s).toEqual("a1b");
 });
+
+it('should recognize type of object.', () => {
+    expect(typeof "abc").toEqual("string");
+    expect(typeof {}).toEqual("object");
+});
