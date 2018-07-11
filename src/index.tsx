@@ -2,7 +2,7 @@ import * as jQuery from "jquery";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import ActionMenuBar from "./components/action-men-bar";
-import QuartzExpression from './components/quartz-expression';
+import QuartzExpressionUi from './components/quartz-expression-ui';
 import ActionMenuDescription from './datashape/action-menu-description';
 import "./index.css";
 // import registerServiceWorker from "./registerServiceWorker";
@@ -38,7 +38,7 @@ import { pureCombo } from './util/pure-combo';
 (window as any).freact.pureCombo = pureCombo;
 
 (window as any).freact.renderQuartzExpression = () => {
-  ReactDOM.render(<QuartzExpression/>,
+  ReactDOM.render(<QuartzExpressionUi/>,
     document.getElementById("quartz-expression"));
 };
 (window as any).freact.renderActionMenuBar = (baseUrl: string, tableContainerCss: string, mds: Array<ActionMenuDescription | string>) => {
