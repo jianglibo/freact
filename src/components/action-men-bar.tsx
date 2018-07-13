@@ -3,8 +3,16 @@ import * as React from "react";
 import { SyntheticEvent } from "react";
 import ActionMenuBarProps from "../datashape/action-menu-bar-props";
 import ActionMenuDescription from "../datashape/action-menu-description";
+import { IActionMenuOnClick } from "../datashape/action-menu-description";
 import ActionForm from "./action-form";
 import ActionMenu from "./action-menu";
+
+function isIActionMenuOnClick(o: any): o is IActionMenuOnClick {
+  if (!o) {
+    return false;
+  }
+  return (o as IActionMenuOnClick).react !== undefined;
+}
 
 export default class ActionMenuBar extends React.Component<
   ActionMenuBarProps,
@@ -91,7 +99,7 @@ export default class ActionMenuBar extends React.Component<
     );
   }
 
-  private actionBtnClicked(md: ActionMenuDescription, e: SyntheticEvent) {
+  private doDefault(md: ActionMenuDescription, e: SyntheticEvent): void {
     if (md.actionId === "create" || md.actionId === "edit") {
       return;
     } else {
@@ -101,9 +109,27 @@ export default class ActionMenuBar extends React.Component<
       }
     }
     e.preventDefault();
-    // tslint:disable-next-line:no-console
-    console.log(this);
-    // tslint:disable-next-line:no-console
-    console.log(this.af);
+  }
+
+  private actionBtnClicked(md: ActionMenuDescription, e: SyntheticEvent) {
+    const oc = md.onClick;
+    if (!oc) {
+      this.doDefault(md, e);
+      return;
+    }
+
+    if (isIActionMenuOnClick(oc)) {
+      switch (oc.react) {
+        case "GET":
+          e.preventDefault();
+          window.location.href = oc.url;
+          break;
+        default:
+          break;
+      }
+    } else if (typeof oc === 'function') {
+      const thisoc = oc.bind(this);
+      thisoc();
+    }
   }
 }

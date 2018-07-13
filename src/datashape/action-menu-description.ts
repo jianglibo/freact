@@ -4,11 +4,17 @@ export enum ActiveWhen {
   NOT_EMPTY
 }
 
+export interface IActionMenuOnClick {
+  react: 'GET' | 'POST'
+  url: string
+  [key: string]: any
+}
+
 export default class ActionMenuDescription {
   constructor(
     public actionId: string,
     public name?: string,
-    public onClick?: () => void | null,
+    public onClick?: () => void | null | IActionMenuOnClick,
     public icon?: string,
     public activeOn?: ActiveWhen
   ) {

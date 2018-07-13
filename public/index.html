@@ -30,10 +30,8 @@
 	<noscript>
 		You need to enable JavaScript to run this app.
 	</noscript>
-	<div id="action-menu-bar"></div>
-
 	<div id="quartz-expression"></div>
-
+	<div id="action-menu-bar"></div>
 	<table class="pure-table pure-table-bordered item-list">
 		<thead>
 			<tr>
@@ -86,13 +84,28 @@
       The build step will place the bundled scripts into the <body> tag.
 
       To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
+	  To create a production bundle, use `npm run build` or `yarn build`.
+	    public actionId: string,
+		public name?: string,
+		public onClick?: () => void | null | IActionMenuOnClick,
+		public icon?: string,
+		public activeOn?: ActiveWhen
 		-->
 	<script>
 		document.addEventListener("DOMContentLoaded", function (event) {
 			window.freact.renderActionMenuBar("/app/servers",
 			 ".item-list",
-			  ["create", "edit", "delete"]);
+			  ["create", "edit", "delete",{
+				  actionId: 'newurl',
+				  name: '新的URL',
+				  onClick: {react: 'GET', url: "servers"}}, {
+					  actionId: 'callfn',
+					  name: 'CALL函數',
+					  onClick: function() {
+						  console.log(this.state.selectedItems);
+					  }
+				  }
+				  ]);
 
 			 window.freact.pureCombo();
 

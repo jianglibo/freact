@@ -1,3 +1,4 @@
+
 it('is a data type.', () => {
     interface IstringIndexed {
         [key: string]: string
@@ -18,4 +19,5 @@ it('can handle string interpolation', () => {
 it('should recognize type of object.', () => {
     expect(typeof "abc").toEqual("string");
     expect(typeof {}).toEqual("object");
+    expect(typeof (()=> 0)).toEqual("function");
 });
