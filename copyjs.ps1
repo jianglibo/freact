@@ -1,3 +1,4 @@
+#Set-ExecutionPolicy RemoteSigned
 $dst = "..\mysql-backup\src\main\resources\cache-forever\freact"
 Remove-Item "${dst}\*.*"
 $src = ".\build\static\js"
