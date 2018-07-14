@@ -4,6 +4,7 @@ import { SyntheticEvent } from "react";
 import ActionMenuBarProps from "../datashape/action-menu-bar-props";
 import ActionMenuDescription from "../datashape/action-menu-description";
 import { IActionMenuOnClick } from "../datashape/action-menu-description";
+import { StrUtil } from "../util/str-util";
 import ActionForm from "./action-form";
 import ActionMenu from "./action-menu";
 
@@ -100,18 +101,22 @@ export default class ActionMenuBar extends React.Component<
   }
 
   private doDefault(md: ActionMenuDescription, e: SyntheticEvent): void {
-    if (md.actionId === "create" || md.actionId === "edit") {
-      return;
+    if (md.actionId === "create") {
+      window.location.href = this.props.baseUrl + "/create";
+    } else if(md.actionId === 'edit') {
+      const items = this.state.selectedItems;
+      if (items.length === 1) {
+        window.location.href = `${this.props.baseUrl}/${StrUtil.keepTrailingNumber(items[0].id.toString())}/edit`;
+      }
     } else {
-      if (this.af.current != null) {
-        e.preventDefault();
+      if (this.state.selectedItems.length > 0 && this.af.current != null) {
         this.af.current.submit(md);
       }
     }
-    e.preventDefault();
   }
 
   private actionBtnClicked(md: ActionMenuDescription, e: SyntheticEvent) {
+    e.preventDefault();
     const oc = md.onClick;
     if (!oc) {
       this.doDefault(md, e);

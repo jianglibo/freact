@@ -1,7 +1,7 @@
 export enum ActiveWhen {
-  ALWAYS,
-  SINGLE,
-  NOT_EMPTY
+  ALWAYS = "ALWAYS",
+  SINGLE = "SINGLE",
+  NOT_EMPTY = "NOT_EMPTY"
 }
 
 export interface IActionMenuOnClick {

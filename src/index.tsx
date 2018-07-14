@@ -9,6 +9,7 @@ import "./index.css";
 
 // import { jQuery } from "jquery";
 import { pureCombo } from './util/pure-combo';
+import { StrUtil } from "./util/str-util";
 (window as any).showHello = "showHello";
 (window as any).jQuery = jQuery;
 // window.alert((window as any)['abc']);
@@ -36,6 +37,8 @@ import { pureCombo } from './util/pure-combo';
 (window as any).freact = {};
 
 (window as any).freact.pureCombo = pureCombo;
+
+(window as any).freact.strUtil = StrUtil;
 
 (window as any).freact.renderQuartzExpression = () => {
   ReactDOM.render(<QuartzExpressionUi/>,

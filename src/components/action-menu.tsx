@@ -1,7 +1,6 @@
 import * as React from "react";
 import { ActiveWhen } from "../datashape/action-menu-description";
 import ActionMenuProps from "../datashape/action-menu-props";
-import { StrUtil } from "../util/str-util"
 export default class ActionMenu extends React.Component<ActionMenuProps, {}> {
   constructor(props: ActionMenuProps) {
     super(props);
@@ -10,11 +9,12 @@ export default class ActionMenu extends React.Component<ActionMenuProps, {}> {
 
   public render() {
     return (
-      <button className={this.calcClass()}>
+      <button className={this.calcClass()} onClick={this.linkClicked}>
         {this.props.menuDescription.icon && (
           <i className={this.props.menuDescription.icon} />
         )}
-        <a href={this.calcHref()} onClick={this.linkClicked}>{this.props.menuDescription.name}</a>
+        {/* <a href={this.calcHref()} onClick={this.linkClicked}>{this.props.menuDescription.name}</a> */}
+        <a href="#">{this.props.menuDescription.name}</a>
       </button>
     );
   }
@@ -44,29 +44,7 @@ export default class ActionMenu extends React.Component<ActionMenuProps, {}> {
     }
     return cname;
   }
-  /**
-   * GET ./create
-   * POST ./
-   * GET ./1/edit
-   * PUT ./1
-   */
-  private calcHref(): string {
-    let href = "#";
-    const md = this.props.menuDescription;
-    const items = this.props.selectedItems;
-    switch (md.actionId) {
-      case "create":
-        href = this.props.baseUrl + "/create";
-        break;
-      case "edit":
-        if (items.length === 1) {
-          href = `${this.props.baseUrl}/${StrUtil.keepTrailingNumber(items[0].id.toString())}/edit`;
-        }
-      default:
-        break;
-    }
-    return href;
-  }
+
 }
 
 /**
