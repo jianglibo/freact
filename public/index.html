@@ -104,11 +104,17 @@
 					  onClick: function() {
 						  console.log(this.state.selectedItems);
 					  }
-				  }
+				  }, {
+				  actionId: 'ajaxPost',
+				  name: 'ajaxPost',
+				  activeOn: 'SINGLE',
+				  onClick: {react: 'POST', url: "servers", data: function() {
+					  console.log(this);
+					  return {a: 1, B: this.state.selectedItems[0].id};
+					}}}
 				  ]);
 
 			 window.freact.pureCombo();
-
 			 window.freact.renderQuartzExpression();
 		});
 	</script>

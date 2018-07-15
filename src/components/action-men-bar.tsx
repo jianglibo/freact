@@ -21,12 +21,12 @@ export default class ActionMenuBar extends React.Component<
     selectedItems: Array<{ id: string | number }>;
     method: "POST" | "PUT" | "DELETE";
   }
-> {
+  > {
   private af: React.RefObject<ActionForm>;
+
 
   constructor(props: ActionMenuBarProps) {
     super(props);
-    this.state = { selectedItems: [], method: "POST" };
     const tbodyCheckboxes = this.props.tableContainer.find(
       "tbody input[type='checkbox']"
     );
@@ -55,22 +55,26 @@ export default class ActionMenuBar extends React.Component<
         theadCheckbox.prop("checked", false);
       }
     });
-
+    const initSelectedItems = this.getSelectedIds(true);
+    this.state = { selectedItems: initSelectedItems, method: "POST" };
     this.af = React.createRef();
   }
 
-  public getSelectedIds(): Array<{ id: string | number }> {
+  public getSelectedIds(notSetState?: boolean): Array<{ id: string | number }> {
     const c = this.props.tableContainer;
     const checkedNodes = c.find("tbody input[type='checkbox']:checked");
     const ids: Array<{ id: string | number }> = [];
     checkedNodes.each((idx, val) => {
-      const id = $(val).attr("id");
-      if (!!id) {
-        // tslint:disable-next-line:object-literal-shorthand
-        ids.push({ id: id });
+      const idValue = $(val).attr("id");
+      if (idValue) {
+        ids.push({ id: StrUtil.keepTrailingNumber(idValue) });
       }
     });
-    this.setState({ selectedItems: ids });
+    if (!notSetState) {
+      this.setState({
+        selectedItems: ids
+      });
+    }
     return ids;
   }
 
@@ -94,22 +98,34 @@ export default class ActionMenuBar extends React.Component<
             key={md.actionId}
             selectedItems={this.state.selectedItems}
             actionBtnClicked={this.actionBtnClicked}
+            currentUrl={window.location.href}
           />
         ))}
       </div>
     );
   }
 
+  private confirm(md: ActionMenuDescription): boolean {
+    if (md.confirm) {
+      let msg = "继续执行？";
+      if (typeof md.confirm === 'string') {
+        msg = md.confirm;
+      }
+      return window.confirm(msg);
+    }
+    return true;
+  }
+
   private doDefault(md: ActionMenuDescription, e: SyntheticEvent): void {
     if (md.actionId === "create") {
       window.location.href = this.props.baseUrl + "/create";
-    } else if(md.actionId === 'edit') {
+    } else if (md.actionId === 'edit') {
       const items = this.state.selectedItems;
       if (items.length === 1) {
-        window.location.href = `${this.props.baseUrl}/${StrUtil.keepTrailingNumber(items[0].id.toString())}/edit`;
+        window.location.href = `${this.props.baseUrl}/${items[0].id}/edit`;
       }
     } else {
-      if (this.state.selectedItems.length > 0 && this.af.current != null) {
+      if (this.confirm(md) && this.state.selectedItems.length > 0 && this.af.current != null) {
         this.af.current.submit(md);
       }
     }
@@ -117,6 +133,7 @@ export default class ActionMenuBar extends React.Component<
 
   private actionBtnClicked(md: ActionMenuDescription, e: SyntheticEvent) {
     e.preventDefault();
+
     const oc = md.onClick;
     if (!oc) {
       this.doDefault(md, e);
@@ -127,7 +144,33 @@ export default class ActionMenuBar extends React.Component<
       switch (oc.react) {
         case "GET":
           e.preventDefault();
-          window.location.href = oc.url;
+          let url = oc.url;
+          if (this.state.selectedItems.length === 1) {
+            url = StrUtil.format(oc.url, { id: this.state.selectedItems[0].id });
+          }
+          window.location.href = url;
+          break;
+        case 'POST':
+        case 'DELETE':
+        case 'PUT':
+          let dt = oc.data;
+          if (typeof dt === 'function') {
+            dt = dt.call(this);
+          }
+          $.ajax(oc.url, { data: dt, method: oc.react })
+            .done((data, textStatus, jqXHR) => {
+              if (data.redirect) {
+                window.location.href = data.redirect;
+              } else {
+                const st = JSON.stringify(data);
+                window.alert(`server return  data: ${st}`);
+              }
+            }).fail((jqXHR, textStatus, errorThrown) => {
+              window.alert(`server return status: ${jqXHR.status}, textStatus: ${textStatus}, errorThrown: ${errorThrown}`);
+              // console.log(jqXHR.status);
+              // jqXHR.getResponseHeader("location");
+              // console.log(textStatus);
+            });
           break;
         default:
           break;
