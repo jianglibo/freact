@@ -67,7 +67,7 @@ export default class ActionMenuBar extends React.Component<
     checkedNodes.each((idx, val) => {
       const idValue = $(val).attr("id");
       if (idValue) {
-        ids.push({ id: StrUtil.keepTrailingNumber(idValue) });
+        ids.push({ id: StrUtil.chopDashPrefix(idValue) });
       }
     });
     if (!notSetState) {

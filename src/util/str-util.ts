@@ -68,6 +68,12 @@ function parseQueryStringInternal(query: string): { [key: string]: string | stri
 }
 
 export let StrUtil = {
+    chopDashPrefix: (origin: string | number): string => {
+        if (typeof origin === 'number') {
+            return origin + "";
+        }
+        return origin.replace(/^.*?-/, "");
+    },
     format: template,
     keepTrailingNumber: (origin: string | number): string => {
         if (typeof origin === 'number') {

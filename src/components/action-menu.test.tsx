@@ -24,7 +24,6 @@ it('function active menu conditional.', () => {
   const fn = (md: ActionMenuDescription, e : React.SyntheticEvent) => {console.log(e)};
   const am = new ActionMenuDescription('create');
   am.activeOn = function(this: ActionMenu): boolean {
-    console.log(this.urlParametesMap);
     return !!this.urlParametesMap.abc;
   };
   let hello = enzyme.shallow(<ActionMenu baseUrl="/app" menuDescription={am} selectedItems={[{id: 55}]} actionBtnClicked={fn} currentUrl={"http://www.1.com?abc=abc"} />);

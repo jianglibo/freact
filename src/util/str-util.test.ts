@@ -20,6 +20,19 @@ it('should format empty object.', () => {
     expect(v).toEqual(" world!");
 });
 
+it('should chopDashPrefix.', () => {
+    let v = StrUtil.chopDashPrefix("item-0");
+    expect(v).toEqual("0");
+    v = StrUtil.chopDashPrefix("item");
+    expect(v).toEqual("item");
+
+    v = StrUtil.chopDashPrefix("item-");
+    expect(v).toEqual("");
+
+    v = StrUtil.chopDashPrefix("item-0-1-2");
+    expect(v).toEqual("0-1-2");
+});
+
 it('should parse no parameter url.', () => {
     const em = "".substring(1);
     expect(em).toEqual("");

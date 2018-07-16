@@ -31,7 +31,7 @@ export default class ActionForm extends React.Component<ActionFormProps, {}> {
       return <form action={this.props.baseUrl} ref={this.fm} method="POST">
           <input type="hidden" name="_method" value={this.props.method}/>
           <input type="hidden" name="ids" value={
-              this.props.selectedItems.map(ido => StrUtil.keepTrailingNumber(ido.id.toString())).join(",")
+              this.props.selectedItems.map(ido => StrUtil.chopDashPrefix(ido.id.toString())).join(",")
           }/>
       </form>;
   }
