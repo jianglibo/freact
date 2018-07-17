@@ -23,7 +23,7 @@ export default class ActionMenuBar extends React.Component<
   }
   > {
   private af: React.RefObject<ActionForm>;
-
+  private singleSelect = false;
 
   constructor(props: ActionMenuBarProps) {
     super(props);
@@ -34,6 +34,12 @@ export default class ActionMenuBar extends React.Component<
       "thead input[type='checkbox']"
     );
 
+    this.singleSelect = this.props.tableContainer.hasClass('item-list-single-select');
+
+    if (this.singleSelect) {
+      theadCheckbox.prop('disabled', true);
+    }
+
     this.actionBtnClicked = this.actionBtnClicked.bind(this);
 
     theadCheckbox.change(() => {
@@ -42,25 +48,35 @@ export default class ActionMenuBar extends React.Component<
       } else {
         tbodyCheckboxes.prop("checked", false);
       }
-      this.getSelectedIds();
+      const ids = this.getSelectedIds();
+      this.setState({selectedItems: ids});
     });
 
-    tbodyCheckboxes.change(() => {
+    tbodyCheckboxes.change((e) => {
+      const tchecked = $(e.target).prop('checked');
       const c = this.props.tableContainer;
       const allNodes = c.find("tbody input[type='checkbox']");
-      const ids = this.getSelectedIds();
-      if (allNodes.length === ids.length) {
-        theadCheckbox.prop("checked", true);
+      let ids = this.getSelectedIds();
+      if (this.singleSelect) {
+        allNodes.prop('checked', false);
+        $(e.target).prop('checked', tchecked);
+        ids = this.getSelectedIds();
       } else {
-        theadCheckbox.prop("checked", false);
+        if (allNodes.length === ids.length) {
+          theadCheckbox.prop("checked", true);
+        } else {
+          theadCheckbox.prop("checked", false);
+        }
       }
+      this.setState({selectedItems: ids});
     });
-    const initSelectedItems = this.getSelectedIds(true);
+
+    const initSelectedItems = this.getSelectedIds();
     this.state = { selectedItems: initSelectedItems, method: "POST" };
     this.af = React.createRef();
   }
 
-  public getSelectedIds(notSetState?: boolean): Array<{ id: string | number }> {
+  public getSelectedIds(): Array<{ id: string | number }> {
     const c = this.props.tableContainer;
     const checkedNodes = c.find("tbody input[type='checkbox']:checked");
     const ids: Array<{ id: string | number }> = [];
@@ -70,11 +86,6 @@ export default class ActionMenuBar extends React.Component<
         ids.push({ id: StrUtil.chopDashPrefix(idValue) });
       }
     });
-    if (!notSetState) {
-      this.setState({
-        selectedItems: ids
-      });
-    }
     return ids;
   }
 
@@ -133,6 +144,8 @@ export default class ActionMenuBar extends React.Component<
 
   private actionBtnClicked(md: ActionMenuDescription, e: SyntheticEvent) {
     e.preventDefault();
+
+    if (!this.confirm(md)) {return;}
 
     const oc = md.onClick;
     if (!oc) {
