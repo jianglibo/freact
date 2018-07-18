@@ -6,8 +6,12 @@ export enum ActiveWhen {
 
 export interface IActionMenuOnClick {
   react: 'GET' | 'POST' | 'DELETE' | 'PUT'
-  url: string
-  data?: {[key: string]: any} | (() => {[key: string]: string})
+  url: string | (() => {})
+  data?: {[key: string]: any} | (() => {[key: string]: string}),
+  settings?: {[key: string]: any},
+  done?: ((data: any, textStatus: JQuery.Ajax.ErrorTextStatus, jqXHR: JQuery.jqXHR<any>) => {}),
+  fail?: ((jqXHR: JQuery.jqXHR<any>, textStatus: JQuery.Ajax.ErrorTextStatus, errorThrown: string) => {}),
+
 }
 
 export default class ActionMenuDescription {

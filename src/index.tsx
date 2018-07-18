@@ -1,7 +1,7 @@
 import * as jQuery from "jquery";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import ActionMenuBar from "./components/action-men-bar";
+import ActionMenuBar from "./components/action-menu-bar";
 import QuartzExpressionUi from './components/quartz-expression-ui';
 import ActionMenuDescription from './datashape/action-menu-description';
 import "./index.css";

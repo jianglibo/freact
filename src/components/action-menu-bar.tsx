@@ -1,4 +1,4 @@
-import * as $ from "jquery";
+import * as jQuery from "jquery";
 import * as React from "react";
 import { SyntheticEvent } from "react";
 import ActionMenuBarProps from "../datashape/action-menu-bar-props";
@@ -53,13 +53,13 @@ export default class ActionMenuBar extends React.Component<
     });
 
     tbodyCheckboxes.change((e) => {
-      const tchecked = $(e.target).prop('checked');
+      const tchecked = jQuery(e.target).prop('checked');
       const c = this.props.tableContainer;
       const allNodes = c.find("tbody input[type='checkbox']");
       let ids = this.getSelectedIds();
       if (this.singleSelect) {
         allNodes.prop('checked', false);
-        $(e.target).prop('checked', tchecked);
+        jQuery(e.target).prop('checked', tchecked);
         ids = this.getSelectedIds();
       } else {
         if (allNodes.length === ids.length) {
@@ -81,7 +81,7 @@ export default class ActionMenuBar extends React.Component<
     const checkedNodes = c.find("tbody input[type='checkbox']:checked");
     const ids: Array<{ id: string | number }> = [];
     checkedNodes.each((idx, val) => {
-      const idValue = $(val).attr("id");
+      const idValue = jQuery(val).attr("id");
       if (idValue) {
         ids.push({ id: StrUtil.chopDashPrefix(idValue) });
       }
@@ -154,13 +154,18 @@ export default class ActionMenuBar extends React.Component<
     }
 
     if (isIActionMenuOnClick(oc)) {
+      let url: string;
+      if (typeof oc.url === 'string') {
+        url = oc.url;
+        if (this.state.selectedItems.length === 1) {
+          url = StrUtil.format(url, { id: this.state.selectedItems[0].id });
+        }
+      } else {
+        url = oc.url.call(this);
+      }
       switch (oc.react) {
         case "GET":
           e.preventDefault();
-          let url = oc.url;
-          if (this.state.selectedItems.length === 1) {
-            url = StrUtil.format(oc.url, { id: this.state.selectedItems[0].id });
-          }
           window.location.href = url;
           break;
         case 'POST':
@@ -170,16 +175,31 @@ export default class ActionMenuBar extends React.Component<
           if (typeof dt === 'function') {
             dt = dt.call(this);
           }
-          $.ajax(oc.url, { data: dt, method: oc.react })
+
+          let o = oc.settings;
+          if (!o) {
+            o = {};
+          }
+          o.data = dt;
+          o.method = oc.react;
+          jQuery.ajax(url, o)
             .done((data, textStatus, jqXHR) => {
               if (data.redirect) {
                 window.location.href = data.redirect;
               } else {
-                const st = JSON.stringify(data);
-                window.alert(`server return  data: ${st}`);
+                if (oc.done) {
+                  oc.done.call(this, data, textStatus, jqXHR);
+                } else {
+                  const st = JSON.stringify(data);
+                  window.alert(`server return  data: ${st}`);
+                }
               }
             }).fail((jqXHR, textStatus, errorThrown) => {
-              window.alert(`server return status: ${jqXHR.status}, textStatus: ${textStatus}, errorThrown: ${errorThrown}`);
+              if (oc.fail) {
+                oc.fail.call(this, jqXHR, textStatus, errorThrown);
+              } else {
+                window.alert(`server return status: ${jqXHR.status}, textStatus: ${textStatus}, errorThrown: ${errorThrown}`);
+              }
               // console.log(jqXHR.status);
               // jqXHR.getResponseHeader("location");
               // console.log(textStatus);
