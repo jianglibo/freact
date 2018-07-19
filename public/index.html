@@ -32,6 +32,7 @@
 	</noscript>
 	<div id="quartz-expression"></div>
 	<div id="action-menu-bar"></div>
+	<div id="rselect"></div>
 	<!--  item-list-single-select -->
 	<table class="pure-table pure-table-bordered item-list">
 		<thead>
@@ -114,9 +115,9 @@
 					  return {a: 1, B: this.state.selectedItems[0].id};
 					}}}
 				  ]);
-
 			 window.freact.pureCombo();
 			 window.freact.renderQuartzExpression();
+			 window.freact.renderRselect('rselect');
 		});
 	</script>
 

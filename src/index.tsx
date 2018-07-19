@@ -8,6 +8,7 @@ import "./index.css";
 // import registerServiceWorker from "./registerServiceWorker";
 
 // import { jQuery } from "jquery";
+import Rselect from "./components/rselect";
 import { formUtil } from './util/form-util';
 import { pureCombo } from './util/pure-combo';
 import { StrUtil } from "./util/str-util";
@@ -42,10 +43,12 @@ import { StrUtil } from "./util/str-util";
 (window as any).freact.strUtil = StrUtil;
 (window as any).freact.formUtil = formUtil;
 
+
 (window as any).freact.renderQuartzExpression = () => {
   ReactDOM.render(<QuartzExpressionUi/>,
     document.getElementById("quartz-expression"));
 };
+
 (window as any).freact.renderActionMenuBar = (baseUrl: string, tableContainerCss: string, mds: Array<ActionMenuDescription | string>) => {
   const mdobs = mds.map(md => {
     if (typeof md === "string") {
@@ -61,6 +64,13 @@ import { StrUtil } from "./util/str-util";
       tableContainer={jQuery(tableContainerCss)}
     />,
     document.getElementById("action-menu-bar")
+  );
+};
+
+(window as any).freact.renderRselect = (wrapperDomId: string) => {
+  ReactDOM.render(
+    <Rselect/>,
+    document.getElementById(wrapperDomId)
   );
 };
 
