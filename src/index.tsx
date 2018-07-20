@@ -2,16 +2,16 @@ import * as jQuery from "jquery";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import ActionMenuBar from "./components/action-menu-bar";
-import QuartzExpressionUi from './components/quartz-expression-ui';
-import ActionMenuDescription from './datashape/action-menu-description';
+import QuartzExpressionUi from "./components/quartz-expression-ui";
+import ActionMenuDescription from "./datashape/action-menu-description";
 import "./index.css";
 // import registerServiceWorker from "./registerServiceWorker";
 
 // import { jQuery } from "jquery";
 import { Option } from "react-select";
 import RselectMultiStatic from "./components/rselect-multi-static";
-import { formUtil } from './util/form-util';
-import { pureCombo } from './util/pure-combo';
+import { formUtil } from "./util/form-util";
+import { pureCombo } from "./util/pure-combo";
 import { StrUtil } from "./util/str-util";
 (window as any).showHello = "showHello";
 (window as any).jQuery = jQuery;
@@ -44,13 +44,18 @@ import { StrUtil } from "./util/str-util";
 (window as any).freact.strUtil = StrUtil;
 (window as any).freact.formUtil = formUtil;
 
-
 (window as any).freact.renderQuartzExpression = () => {
-  ReactDOM.render(<QuartzExpressionUi/>,
-    document.getElementById("quartz-expression"));
+  ReactDOM.render(
+    <QuartzExpressionUi />,
+    document.getElementById("quartz-expression")
+  );
 };
 
-(window as any).freact.renderActionMenuBar = (baseUrl: string, tableContainerCss: string, mds: Array<ActionMenuDescription | string>) => {
+(window as any).freact.renderActionMenuBar = (
+  baseUrl: string,
+  tableContainerCss: string,
+  mds: Array<ActionMenuDescription | string>
+) => {
   const mdobs = mds.map(md => {
     if (typeof md === "string") {
       return new ActionMenuDescription(md);
@@ -68,12 +73,17 @@ import { StrUtil } from "./util/str-util";
   );
 };
 
-(window as any).freact.renderRselect = (wrapperDomId: string, options: Array<Option<string|number>>) => {
+(window as any).freact.renderRselect = (
+  wrapperDomId: string,
+  fieldName: string,
+  options: Array<Option<string | number>>,
+  joinValues?: boolean,
+  initSelected?: Array<string|number|undefined>
+) => {
   ReactDOM.render(
-    <RselectMultiStatic staticOptions={options}/>,
+    <RselectMultiStatic staticOptions={options} fieldName={fieldName} joinValues={true} initSelected={initSelected}/>,
     document.getElementById(wrapperDomId)
   );
 };
-
 
 // registerServiceWorker();
