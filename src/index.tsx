@@ -8,7 +8,8 @@ import "./index.css";
 // import registerServiceWorker from "./registerServiceWorker";
 
 // import { jQuery } from "jquery";
-import Rselect from "./components/rselect";
+import { Option } from "react-select";
+import RselectMultiStatic from "./components/rselect-multi-static";
 import { formUtil } from './util/form-util';
 import { pureCombo } from './util/pure-combo';
 import { StrUtil } from "./util/str-util";
@@ -67,9 +68,9 @@ import { StrUtil } from "./util/str-util";
   );
 };
 
-(window as any).freact.renderRselect = (wrapperDomId: string) => {
+(window as any).freact.renderRselect = (wrapperDomId: string, options: Array<Option<string|number>>) => {
   ReactDOM.render(
-    <Rselect/>,
+    <RselectMultiStatic staticOptions={options}/>,
     document.getElementById(wrapperDomId)
   );
 };
