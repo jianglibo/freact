@@ -1,4 +1,4 @@
-import * as $ from "jquery";
+import * as jQuery from "jquery";
 import * as React from "react";
 import ActionFormProps from '../datashape/action-form-props';
 import ActionMenuDescription from "../datashape/action-menu-description";
@@ -14,7 +14,7 @@ export default class ActionForm extends React.Component<ActionFormProps, {}> {
   }
 
   public submit(md: ActionMenuDescription) {
-      const f = $(this.fm.current);
+      const f = jQuery(this.fm.current);
       let mt = "GET";
       switch (md.actionId) {
           case "delete":

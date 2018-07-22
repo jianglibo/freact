@@ -9,6 +9,7 @@ import "./index.css";
 
 // import { jQuery } from "jquery";
 import { Option } from "react-select";
+import BsConfirm from "./components/bs-confirm";
 import RselectMultiStatic from "./components/rselect-multi-static";
 import { formUtil } from "./util/form-util";
 import { pureCombo } from "./util/pure-combo";
@@ -44,6 +45,43 @@ import { StrUtil } from "./util/str-util";
 (window as any).freact.strUtil = StrUtil;
 (window as any).freact.formUtil = formUtil;
 
+(window as any).freact.unmountComponentAtNode = (container: string | Element) => {
+  let ele: Element | null;
+  if (typeof container === 'string') {
+    if (container.startsWith('#')) {
+      container = container.substring(1);
+    }
+    ele = document.getElementById(container);
+  } else {
+    ele = container;
+  }
+  if (ele) {
+    ReactDOM.unmountComponentAtNode(ele);
+  }
+}
+
+
+
+(window as any).freact.confirm = (
+  wrapperDomId: string,
+  title: string,
+  content: string,
+  callback: (yes: boolean) => void,
+  cancelLabel?: string,
+  confirmLabel?: string
+) => {
+  ReactDOM.render(
+    <BsConfirm 
+    container={wrapperDomId}
+    title={title}
+    content={content}
+    callback={callback}
+    cancelLabel={cancelLabel}
+    confirmLabel={confirmLabel} />,
+    document.getElementById(wrapperDomId)
+  );
+}
+
 (window as any).freact.renderQuartzExpression = () => {
   ReactDOM.render(
     <QuartzExpressionUi />,
@@ -78,10 +116,10 @@ import { StrUtil } from "./util/str-util";
   fieldName: string,
   options: Array<Option<string | number>>,
   joinValues?: boolean,
-  initSelected?: Array<string|number|undefined>
+  initSelected?: Array<string | number | undefined>
 ) => {
   ReactDOM.render(
-    <RselectMultiStatic staticOptions={options} fieldName={fieldName} joinValues={true} initSelected={initSelected}/>,
+    <RselectMultiStatic staticOptions={options} fieldName={fieldName} joinValues={true} initSelected={initSelected} />,
     document.getElementById(wrapperDomId)
   );
 };
