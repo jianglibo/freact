@@ -9,6 +9,7 @@ import "./index.css";
 
 // import { jQuery } from "jquery";
 import { Option } from "react-select";
+import BsCard from './components/bs-card';
 import BsConfirm from "./components/bs-confirm";
 import RselectMultiStatic from "./components/rselect-multi-static";
 import { formUtil } from "./util/form-util";
@@ -60,6 +61,28 @@ import { StrUtil } from "./util/str-util";
   }
 }
 
+(window as any).freact.showCard = (
+    container: string,
+    title: string,
+    subTitle: string,
+    content: string,
+    staySeconds: number,
+    links: Array<{label: string, onClick: () => void}>,
+    styles: {[key: string]: string}
+) => {
+  ReactDOM.render(
+    <BsCard
+     container={container}
+     title={title}
+     subTitle={subTitle}
+     content={content}
+     staySeconds={staySeconds}
+     links={links}
+     styles={styles}
+    />,
+    document.getElementById(container)
+  );
+}
 
 
 (window as any).freact.confirm = (
