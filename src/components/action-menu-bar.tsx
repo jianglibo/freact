@@ -23,7 +23,7 @@ export default class ActionMenuBar extends React.Component<
     selectedItems: Array<{ id: string | number }>;
     method: "POST" | "PUT" | "DELETE";
   }
-> {
+  > {
   private af: React.RefObject<ActionForm>;
   private singleSelect = false;
 
@@ -156,15 +156,11 @@ export default class ActionMenuBar extends React.Component<
       if (items.length === 1) {
         window.location.href = `${this.props.baseUrl}/${items[0].id}/edit`;
       }
-    } else {
+    } else if (md.actionId === 'delete') {
       if (this.state.selectedItems.length > 0 && this.af.current != null) {
-        this.confirm(md).then(b => {
-          if (b) {
-            if (this.af && this.af.current) {
-              this.af.current.submit(md);
-            }
-          }
-        });
+        if (this.af && this.af.current) {
+          this.af.current.submit(md);
+        }
       }
     }
   }
@@ -229,7 +225,7 @@ export default class ActionMenuBar extends React.Component<
                   } else {
                     window.alert(
                       `server return status: ${
-                        jqXHR.status
+                      jqXHR.status
                       }, textStatus: ${textStatus}, errorThrown: ${errorThrown}`
                     );
                   }

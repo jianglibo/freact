@@ -15,7 +15,7 @@ export default class ActionForm extends React.Component<ActionFormProps, {}> {
 
   public submit(md: ActionMenuDescription) {
       const f = jQuery(this.fm.current);
-      let mt = "GET";
+      let mt = "POST";
       switch (md.actionId) {
           case "delete":
             mt = "DELETE";

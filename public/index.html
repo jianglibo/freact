@@ -30,6 +30,7 @@
 	<noscript>
 		You need to enable JavaScript to run this app.
 	</noscript>
+	<div id="bs-confirm-container"></div>
 	<div id="quartz-expression"></div>
 	<div id="action-menu-bar"></div>
 	<div id="rselect"></div>
@@ -122,14 +123,15 @@
 			 window.freact.renderQuartzExpression();
 			 window.freact.renderRselect('rselect',"my-select-field.", [{label: "1", value: 1}, {label: "2", value: 2}, {label: "3", value: 3}]);
 
-			 window.freact.confirm(
-				 'bs-confirm',
-				 'a-title',
-				 'a-content',
-				 function(b) {
-					 console.log(b);
-				 }
-			 );
+			//  window.freact.confirm(
+			// 	 'bs-confirm',
+			// 	 'a-title',
+			// 	 'a-content',
+			// 	 function(b) {
+			// 		 console.log(b);
+			// 	 }
+			//  );
+
 			 window.freact.showCard(
 				 'bs-card',
 				 'a-card-title',
