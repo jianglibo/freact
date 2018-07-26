@@ -1,12 +1,14 @@
 import * as jQuery from "jquery";
-import * as React from "react";
 import { SyntheticEvent } from "react";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 import ActionMenuBarProps from "../datashape/action-menu-bar-props";
 import ActionMenuDescription from "../datashape/action-menu-description";
 import { IActionMenuOnClick } from "../datashape/action-menu-description";
 import { StrUtil } from "../util/str-util";
 import ActionForm from "./action-form";
 import ActionMenu from "./action-menu";
+import BsConfirm from "./bs-confirm";
 
 function isIActionMenuOnClick(o: any): o is IActionMenuOnClick {
   if (!o) {
@@ -21,7 +23,7 @@ export default class ActionMenuBar extends React.Component<
     selectedItems: Array<{ id: string | number }>;
     method: "POST" | "PUT" | "DELETE";
   }
-  > {
+> {
   private af: React.RefObject<ActionForm>;
   private singleSelect = false;
 
@@ -34,10 +36,12 @@ export default class ActionMenuBar extends React.Component<
       "thead input[type='checkbox']"
     );
 
-    this.singleSelect = this.props.tableContainer.hasClass('item-list-single-select');
+    this.singleSelect = this.props.tableContainer.hasClass(
+      "item-list-single-select"
+    );
 
     if (this.singleSelect) {
-      theadCheckbox.prop('disabled', true);
+      theadCheckbox.prop("disabled", true);
     }
 
     this.actionBtnClicked = this.actionBtnClicked.bind(this);
@@ -49,17 +53,17 @@ export default class ActionMenuBar extends React.Component<
         tbodyCheckboxes.prop("checked", false);
       }
       const ids = this.getSelectedIds();
-      this.setState({selectedItems: ids});
+      this.setState({ selectedItems: ids });
     });
 
-    tbodyCheckboxes.change((e) => {
-      const tchecked = jQuery(e.target).prop('checked');
+    tbodyCheckboxes.change(e => {
+      const tchecked = jQuery(e.target).prop("checked");
       const c = this.props.tableContainer;
       const allNodes = c.find("tbody input[type='checkbox']");
       let ids = this.getSelectedIds();
       if (this.singleSelect) {
-        allNodes.prop('checked', false);
-        jQuery(e.target).prop('checked', tchecked);
+        allNodes.prop("checked", false);
+        jQuery(e.target).prop("checked", tchecked);
         ids = this.getSelectedIds();
       } else {
         if (allNodes.length === ids.length) {
@@ -68,7 +72,7 @@ export default class ActionMenuBar extends React.Component<
           theadCheckbox.prop("checked", false);
         }
       }
-      this.setState({selectedItems: ids});
+      this.setState({ selectedItems: ids });
     });
 
     const initSelectedItems = this.getSelectedIds();
@@ -116,28 +120,51 @@ export default class ActionMenuBar extends React.Component<
     );
   }
 
-  private confirm(md: ActionMenuDescription): boolean {
-    if (md.confirm) {
-      let msg = "继续执行？";
-      if (typeof md.confirm === 'string') {
-        msg = md.confirm;
+  private confirm(md: ActionMenuDescription): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      if (md.confirm) {
+        let msg = "继续执行？";
+        if (typeof md.confirm === "string") {
+          msg = md.confirm;
+        }
+        const cid = "bs-confirm-container";
+        const cc = document.getElementById(cid);
+        if (cc) {
+          ReactDOM.render(
+            <BsConfirm
+              container={cid}
+              title="Confirm"
+              content={msg}
+              callback={resolve}
+            />,
+            cc
+          );
+        } else {
+          resolve(window.confirm(msg));
+        }
+      } else {
+        resolve(true);
       }
-      return window.confirm(msg);
-    }
-    return true;
+    });
   }
 
   private doDefault(md: ActionMenuDescription, e: SyntheticEvent): void {
     if (md.actionId === "create") {
       window.location.href = this.props.baseUrl + "/create";
-    } else if (md.actionId === 'edit') {
+    } else if (md.actionId === "edit") {
       const items = this.state.selectedItems;
       if (items.length === 1) {
         window.location.href = `${this.props.baseUrl}/${items[0].id}/edit`;
       }
     } else {
-      if (this.confirm(md) && this.state.selectedItems.length > 0 && this.af.current != null) {
-        this.af.current.submit(md);
+      if (this.state.selectedItems.length > 0 && this.af.current != null) {
+        this.confirm(md).then(b => {
+          if (b) {
+            if (this.af && this.af.current) {
+              this.af.current.submit(md);
+            }
+          }
+        });
       }
     }
   }
@@ -145,72 +172,80 @@ export default class ActionMenuBar extends React.Component<
   private actionBtnClicked(md: ActionMenuDescription, e: SyntheticEvent) {
     e.preventDefault();
 
-    if (!this.confirm(md)) {return;}
-
-    const oc = md.onClick;
-    if (!oc) {
-      this.doDefault(md, e);
-      return;
-    }
-
-    if (isIActionMenuOnClick(oc)) {
-      let url: string;
-      if (typeof oc.url === 'string') {
-        url = oc.url;
-        if (this.state.selectedItems.length === 1) {
-          url = StrUtil.format(url, { id: this.state.selectedItems[0].id });
+    this.confirm(md).then(b => {
+      if (b) {
+        const oc = md.onClick;
+        if (!oc) {
+          this.doDefault(md, e);
+          return;
         }
-      } else {
-        url = oc.url.call(this);
-      }
-      switch (oc.react) {
-        case "GET":
-          e.preventDefault();
-          window.location.href = url;
-          break;
-        case 'POST':
-        case 'DELETE':
-        case 'PUT':
-          let dt = oc.data;
-          if (typeof dt === 'function') {
-            dt = dt.call(this);
-          }
 
-          let o = oc.settings;
-          if (!o) {
-            o = {};
+        if (isIActionMenuOnClick(oc)) {
+          let url: string;
+          if (typeof oc.url === "string") {
+            url = oc.url;
+            if (this.state.selectedItems.length === 1) {
+              url = StrUtil.format(url, { id: this.state.selectedItems[0].id });
+            }
+          } else {
+            url = oc.url.call(this);
           }
-          o.data = dt;
-          o.method = oc.react;
-          jQuery.ajax(url, o)
-            .done((data, textStatus, jqXHR) => {
-              if (data.redirect) {
-                window.location.href = data.redirect;
-              } else {
-                if (oc.done) {
-                  oc.done.call(this, data, textStatus, jqXHR);
-                } else {
-                  const st = JSON.stringify(data);
-                  window.alert(`server return  data: ${st}`);
-                }
+          switch (oc.react) {
+            case "GET":
+              e.preventDefault();
+              window.location.href = url;
+              break;
+            case "POST":
+            case "DELETE":
+            case "PUT":
+              let dt = oc.data;
+              if (typeof dt === "function") {
+                dt = dt.call(this);
               }
-            }).fail((jqXHR, textStatus, errorThrown) => {
-              if (oc.fail) {
-                oc.fail.call(this, jqXHR, textStatus, errorThrown);
-              } else {
-                window.alert(`server return status: ${jqXHR.status}, textStatus: ${textStatus}, errorThrown: ${errorThrown}`);
+
+              let o = oc.settings;
+              if (!o) {
+                o = {};
               }
-              // console.log(jqXHR.status);
-              // jqXHR.getResponseHeader("location");
-              // console.log(textStatus);
-            });
-          break;
-        default:
-          break;
+              o.data = dt;
+              o.method = oc.react;
+              jQuery
+                .ajax(url, o)
+                .done((data, textStatus, jqXHR) => {
+                  if (data.redirect) {
+                    window.location.href = data.redirect;
+                  } else {
+                    if (oc.done) {
+                      oc.done.call(this, data, textStatus, jqXHR);
+                    } else {
+                      const st = JSON.stringify(data);
+                      window.alert(`server return  data: ${st}`);
+                    }
+                  }
+                })
+                .fail((jqXHR, textStatus, errorThrown) => {
+                  if (oc.fail) {
+                    oc.fail.call(this, jqXHR, textStatus, errorThrown);
+                  } else {
+                    window.alert(
+                      `server return status: ${
+                        jqXHR.status
+                      }, textStatus: ${textStatus}, errorThrown: ${errorThrown}`
+                    );
+                  }
+                  // console.log(jqXHR.status);
+                  // jqXHR.getResponseHeader("location");
+                  // console.log(textStatus);
+                });
+              break;
+            default:
+              break;
+          }
+        } else if (typeof oc === "function") {
+          const thisoc = oc.bind(this);
+          thisoc();
+        }
       }
-    } else if (typeof oc === 'function') {
-      const thisoc = oc.bind(this);
-      thisoc();
-    }
+    });
   }
 }
