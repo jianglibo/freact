@@ -21,7 +21,7 @@ export default class ActionMenuDescription {
     public onClick?: (() => void) | IActionMenuOnClick,
     public icon?: string,
     public activeOn?: (() => boolean) | ActiveWhen,
-    public confirm?: boolean | string
+    public confirm?: boolean | string | (() => string)
   ) {
     switch (actionId) {
       case "edit":

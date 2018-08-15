@@ -126,6 +126,8 @@ export default class ActionMenuBar extends React.Component<
         let msg = "继续执行？";
         if (typeof md.confirm === "string") {
           msg = md.confirm;
+        } else if (typeof md.confirm === 'function') {
+          msg = md.confirm.call(this);
         }
         const cid = "bs-confirm-container";
         const cc = document.getElementById(cid);
@@ -167,7 +169,6 @@ export default class ActionMenuBar extends React.Component<
 
   private actionBtnClicked(md: ActionMenuDescription, e: SyntheticEvent) {
     e.preventDefault();
-
     this.confirm(md).then(b => {
       if (b) {
         const oc = md.onClick;

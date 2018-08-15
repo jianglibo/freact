@@ -102,6 +102,16 @@
 			window.freact.renderActionMenuBar("/app/servers",
 			 ".item-list",
 			  ["create", "edit", "delete",{
+				  actionId: 'confirm-fn',
+				  name: 'confirm-fn',
+				  activeOn: 'ALWAYS',
+				  confirm: function() {
+					  return "hello";
+				  },
+				  onClick: function() {
+					  console.log('ya');
+				  }},
+				  {
 				  actionId: 'newurl',
 				  name: '新的URL',
 				  onClick: {react: 'GET', url: "servers"}}, {
