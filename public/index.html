@@ -36,6 +36,7 @@
 	<div id="rselect"></div>
 	<div id="bs-confirm"></div>
 	<div id="bs-card"></div>
+	<div id="bs-modal"></div>
 	<button id="rm-bs-confirm">unmountComponentAtNode</button>
 	<!--  item-list-single-select -->
 	<table class="pure-table pure-table-bordered item-list">
@@ -133,14 +134,21 @@
 			 window.freact.renderQuartzExpression();
 			 window.freact.renderRselect('rselect',"my-select-field.", [{label: "1", value: 1}, {label: "2", value: 2}, {label: "3", value: 3}]);
 
-			//  window.freact.confirm(
-			// 	 'bs-confirm',
-			// 	 'a-title',
-			// 	 'a-content',
-			// 	 function(b) {
-			// 		 console.log(b);
-			// 	 }
-			//  );
+			 window.freact.confirm(
+				 'bs-confirm',
+				 'a-title',
+				 'a-content',
+				 function(b) {
+					 console.log(b);
+				 }
+			 );
+
+			 window.freact.showModal(
+				 'bs-modal',
+				 'a-bs-modal-title',
+				 'a-bs-modal-content',
+				 3000
+			 );
 
 			 window.freact.showCard(
 				 'bs-card',

@@ -11,6 +11,7 @@ import "./index.css";
 import { Option } from "react-select";
 import BsCard from './components/bs-card';
 import BsConfirm from "./components/bs-confirm";
+import BsModal from "./components/bs-modal";
 import RselectMultiStatic from "./components/rselect-multi-static";
 import { formUtil } from "./util/form-util";
 import { pureCombo } from "./util/pure-combo";
@@ -81,6 +82,26 @@ import { StrUtil } from "./util/str-util";
      styles={styles}
     />,
     document.getElementById(container)
+  );
+}
+
+(window as any).freact.showModal = (
+  wrapperDomId: string,
+  title: string,
+  content: string,
+  ttl?: number,
+  size?: "modal-lg" | "modal-sm",
+  closeLabel?: string
+) => {
+  ReactDOM.render(
+    <BsModal 
+    container={wrapperDomId}
+    title={title}
+    content={content}
+    size={size}
+    ttl={ttl}
+    closeLabel={closeLabel}/>,
+    document.getElementById(wrapperDomId)
   );
 }
 
