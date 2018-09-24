@@ -1,4 +1,5 @@
 import * as jQuery from "jquery";
+import "purecss/build/pure-min.css";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import ActionMenuBar from "./components/action-menu-bar";
@@ -12,7 +13,9 @@ import { Option } from "react-select";
 import BsCard from './components/bs-card';
 import BsConfirm from "./components/bs-confirm";
 import BsModal from "./components/bs-modal";
+import CronBuilder from "./components/cron-builder";
 import RselectMultiStatic from "./components/rselect-multi-static";
+import CronBuilderPros from "./datashape/cron-builder/cron-builder-props";
 import { formUtil } from "./util/form-util";
 import { pureCombo } from "./util/pure-combo";
 import { StrUtil } from "./util/str-util";
@@ -165,6 +168,13 @@ import { StrUtil } from "./util/str-util";
   ReactDOM.render(
     <RselectMultiStatic staticOptions={options} fieldName={fieldName} joinValues={true} initSelected={initSelected} />,
     document.getElementById(wrapperDomId)
+  );
+};
+
+(window as any).freact.renderQuartzCronBuilder = (bd: CronBuilderPros, wrapperDomId: string) => {
+  ReactDOM.render(
+    <CronBuilder {...bd}/>,
+    document.getElementById(wrapperDomId || "quartz-cron-builder")
   );
 };
 
