@@ -6,11 +6,11 @@ import CronFieldDetail from "./cron-field-detail";
 import CronFieldInput from "./cron-field-input";
 
 
-export default class CronBuilder extends React.Component<CronBuilderPros, { focusedField: CronFieldDescription, currentCronValue: string }> {
+export default class CronBuilder extends React.Component<CronBuilderPros, { focusedField: CronFieldDescription, currentCronValue: string[] }> {
     constructor(props: CronBuilderPros) {
         super(props);
         const predefined: PredefinedPattern = props.preDefinedPatterns[0];
-        this.state = { focusedField: props.fieldDescriptions[0], currentCronValue: predefined.cronValue }
+        this.state = { focusedField: props.fieldDescriptions[0], currentCronValue: predefined.cronValue.split(' ')}
 
         this.handlePatternChange = this.handlePatternChange.bind(this);
         this.handleFieldFocusChanged = this.handleFieldFocusChanged.bind(this);
@@ -19,6 +19,8 @@ export default class CronBuilder extends React.Component<CronBuilderPros, { focu
     }
 
     public render() {
+        const cv = this.state.currentCronValue.join(' ');
+
         return <div><form className="pure-form pure-form-stacked">
             <fieldset>
                 <div className="pure-g">
@@ -32,7 +34,8 @@ export default class CronBuilder extends React.Component<CronBuilderPros, { focu
                 </div>
             </fieldset>
         </form>
-            <p>每秒钟执行1次, <span style={{ fontWeight: "bolder" }}>Cron表达式：{this.state.currentCronValue}</span></p>
+            <p>每秒钟执行1次, </p>
+            <p><span style={{ fontWeight: "bolder" }}>Cron表达式：{cv}</span></p>
             <form className="pure-form pure-form-stacked">
                 <fieldset>
                     <div className="pure-g">
@@ -48,7 +51,7 @@ export default class CronBuilder extends React.Component<CronBuilderPros, { focu
 
     private handleFieldBlur(idx: number, value: string) {
         let needUpdate = false;
-        const av: string[] = this.state.currentCronValue.split(' ');
+        const av: string[] = this.state.currentCronValue;
         if (!value) {
             if (idx === 5) {
                 if (av[3] === '?') {
@@ -92,14 +95,14 @@ export default class CronBuilder extends React.Component<CronBuilderPros, { focu
             }
         }
         if (needUpdate) {
-            this.setState({ currentCronValue: av.join(' ') });
+            this.setState({ currentCronValue: av});
         }
     }
 
     private handleFieldValueChanged(idx: number, value: string) {
-        const av: string[] = this.state.currentCronValue.split(' ');
+        const av: string[] = this.state.currentCronValue;
         av[idx] = value;
-        this.setState({ currentCronValue: av.join(' ') });
+        this.setState({ currentCronValue: av});
     }
 
     private handleFieldFocusChanged(idx: number) {
@@ -111,8 +114,12 @@ export default class CronBuilder extends React.Component<CronBuilderPros, { focu
     private handlePatternChange(event: React.FormEvent<HTMLSelectElement>) {
         const pdf = this.props.preDefinedPatterns.find(it => it.name === event.currentTarget.value);
         if (pdf) {
-            this.setState({ currentCronValue: pdf.cronValue });
+            this.setState({ currentCronValue: pdf.cronValue.split(' ')});
         }
     }
+
+    /*
+    在每个月的1号
+    */
 
 }

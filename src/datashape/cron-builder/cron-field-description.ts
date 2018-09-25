@@ -8,6 +8,6 @@ export default class CronFieldDescription {
   public onFieldFocusChanged: (idx: number) => void
   public onFieldValueChanged: (idx: number, value: string) => void
   public onFieldBlur: (idx: number, value: string) => void
-  public currentCronValue: string
+  public currentCronValue: string[]
   public idx: number
 }

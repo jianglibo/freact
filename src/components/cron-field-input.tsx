@@ -10,26 +10,8 @@ export default class CronFieldInput extends React.Component<CronFieldDescription
 	}
 
 	public render() {
-		// const htmlid = this.props.name;
-		// let idx = 0;
-		// if (htmlid === 'seconds') {
-		// 	idx = 0;
-		// } else if (htmlid === 'minutes') {
-		// 	idx = 1;
-		// } else if (htmlid === 'hours') {
-		// 	idx = 2;
-		// } else if (htmlid === 'dayOfMonth') {
-		// 	idx = 3;
-		// } else if (htmlid === 'month') {
-		// 	idx = 4;
-		// } else if (htmlid === 'dayOfWeek') {
-		// 	idx = 5;
-		// } else if (htmlid === 'year') {
-		// 	idx = 6;
-		// }
-
 		const currentCronValue = this.props.currentCronValue;
-		const currentFieldValue = currentCronValue.split(' ')[this.props.idx];
+		const currentFieldValue = currentCronValue[this.props.idx];
 		return (
 			<div className="pure-u-1-8">
 				<input className="pure-u-23-24" onBlur={this.handleOnBlur} type="text" value={currentFieldValue} placeholder={this.props.iname} onFocus={this.handleOnFocus} onChange={this.handleChange}/>
