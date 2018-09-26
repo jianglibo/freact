@@ -179,19 +179,24 @@
 				 console.log('unmountComponentAtNode result: ' + b);
 			 });
 			 */
-			var cronFields = [{"name":"seconds","iname":"\u79D2\u949F","mandantory":true,"allowedValues":"0-59","allowedSpecialCharacters":", - * \/","examples":[]},{"name":"minutes","iname":"\u5206\u949F","mandantory":true,"allowedValues":"0-59","allowedSpecialCharacters":", - * \/","examples":[]},{"name":"hours","iname":"\u5C0F\u65F6","mandantory":true,"allowedValues":"0-23","allowedSpecialCharacters":", - * \/","examples":[]},{"name":"dayOfMonth","iname":"\u6708\u5929","mandantory":true,"allowedValues":"1-31","allowedSpecialCharacters":", - * \/ ? L W","examples":[]},{"name":"month","iname":"\u6708\u4EFD","mandantory":true,"allowedValues":"1-12 or JAN-DEC","allowedSpecialCharacters":", - * \/","examples":[]},{"name":"dayOfWeek","iname":"\u5468\u5929","mandantory":true,"allowedValues":"1-7 or SUN-SAT","allowedSpecialCharacters":", - * \/ ? L #","examples":[]},{"name":"year","iname":"\u5E74\u4EFD","mandantory":false,"allowedValues":"1970-2099","allowedSpecialCharacters":", - * \/","examples":[]}];
-			var preDefinedPatterns =  [{"name":"period_seconds","iname":"\u6BCF\u9694\u51E0\u79D2\u949F\u6267\u884C","cronValue":"0\/5 * * * * ? *"},{"name":"period_minutes","iname":"\u6BCF\u9694\u51E0\u5206\u949F\u6267\u884C","cronValue":"1 3\/5 * * * ? *"},{"name":"period_hours","iname":"\u6BCF\u9694\u51E0\u5C0F\u65F6\u6267\u884C","cronValue":"2 3 1\/2 * * ? *"},{"name":"period_day_of_month","iname":"\u6BCF\u9694\u51E0\u5929\u6267\u884C","cronValue":"3 33 22 *\/1 * ? *"}];
+
+			var buildCtx = { "allTemplate": "\u5728\u6BCF\u4E00{uname}{separator}", "specifiedTemplate": "\u5728\u7B2C{values}{uname}{separator}", "cronFields": [{ "name": "seconds", "iname": "\u79D2\u949F", "uname": "\u79D2\u949F", "mandatory": true, "allowedValues": "0-59", "allowedSpecialCharacters": ", - * \/", "examples": [] }, { "name": "minutes", "iname": "\u5206\u949F", "uname": "\u5206\u949F", "mandatory": true, "allowedValues": "0-59", "allowedSpecialCharacters": ", - * \/", "examples": [] }, { "name": "hours", "iname": "\u5C0F\u65F6", "uname": "\u5C0F\u65F6", "mandatory": true, "allowedValues": "0-23", "allowedSpecialCharacters": ", - * \/", "examples": [] }, { "name": "dayOfMonth", "iname": "\u6708\u5929", "uname": "\u6708\u5929", "mandatory": true, "allowedValues": "1-31", "allowedSpecialCharacters": ", - * \/ ? L W", "examples": [] }, { "name": "month", "iname": "\u6708\u4EFD", "uname": "\u6708\u4EFD", "mandatory": true, "allowedValues": "1-12 or JAN-DEC", "allowedSpecialCharacters": ", - * \/", "examples": [] }, { "name": "dayOfWeek", "iname": "\u5468\u5929", "uname": "\u5468\u5929", "mandatory": true, "allowedValues": "1-7 or SUN-SAT", "allowedSpecialCharacters": ", - * \/ ? L #", "examples": [] }, { "name": "year", "iname": "\u5E74\u4EFD", "uname": "\u5E74\u4EFD", "mandatory": false, "allowedValues": "1970-2099", "allowedSpecialCharacters": ", - * \/", "examples": [] }], "patterns": [{ "name": "period_seconds", "iname": "\u6BCF\u9694\u51E0\u79D2\u949F\u6267\u884C", "cronValue": "0\/5 * * * * ? *" }, { "name": "period_minutes", "iname": "\u6BCF\u9694\u51E0\u5206\u949F\u6267\u884C", "cronValue": "1 3\/5 * * * ? *" }, { "name": "period_hours", "iname": "\u6BCF\u9694\u51E0\u5C0F\u65F6\u6267\u884C", "cronValue": "2 3 1\/2 * * ? *" }, { "name": "period_day_of_month", "iname": "\u6BCF\u9694\u51E0\u5929\u6267\u884C", "cronValue": "3 33 22 *\/1 * ? *" }], "maxValueNumber": 30, "nextTimeLabel": "\u4E0B\u6B21\u6267\u884C\u65F6\u95F4" };
+
 
 			window.freact.renderQuartzCronBuilder({
-				 fieldDescriptions: cronFields,
-				 preDefinedPatterns: preDefinedPatterns,
-				 focusedField: 'seconds',
-				 focusedPattern: 'period_seconds'
-			 });
+				fieldDescriptions: buildCtx.cronFields,
+				preDefinedPatterns: buildCtx.patterns,
+				maxValueNumber: buildCtx.maxValueNumber,
+				nextTimeLabel: buildCtx.nextTimeLabel,
+				allTemplate: buildCtx.allTemplate,
+				specifiedTemplate: buildCtx.specifiedTemplate,
+				focusedField: 'seconds',
+				focusedPattern: 'period_seconds'
+			});
 		});
 	</script>
 
-<!--
+	<!--
 	<div class="pure-control-group pure-combo">
 		<label for="serverStateCron">健康检查日历</label>
 		<input  type="text" placeholder="">

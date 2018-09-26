@@ -1,4 +1,6 @@
 import CronFieldDescription from "../datashape/cron-builder/cron-field-description";
+import { StrUtil } from "./str-util";
+
 function getMaxMin(idx: number): { max: number; min: number } {
   let thisMax: number = 0;
   let thisMin: number = 0;
@@ -21,6 +23,15 @@ function getMaxMin(idx: number): { max: number; min: number } {
       break;
     case 4:
       thisMax = 12;
+      thisMin = 1;
+      break;
+    case 5:
+      thisMax = 7;
+      thisMin = 1;
+      break;
+    case 6:
+      thisMax = 2099;
+      thisMin = 1970;
   }
   return { max: thisMax, min: thisMin };
 }
@@ -63,6 +74,9 @@ function parseStepInternal(
   cfv: string,
   idx: number
 ): { valid: boolean; start?: number; step?: number; allValues?: number[] } {
+  if (cfv.startsWith('*/')) {
+    cfv = cfv.replace('*/', '0/');
+  }
   const re = /^(\d+)\/(\d+)$/;
   const vs = cfv.match(re);
   const { max } = getMaxMin(idx);
@@ -81,6 +95,23 @@ function parseStepInternal(
   } else {
     return { valid: false };
   }
+}
+
+function getNewFieldStatesInternal(
+  origin: boolean[],
+  errorField: boolean,
+  idx: number
+): boolean[] {
+  let a: boolean[];
+  if (idx >= origin.length) {
+    a = new Array(idx + 1 - origin.length);
+    a.splice(0, 0, ...origin);
+    a[idx] = errorField;
+  } else {
+    a = origin.slice(0);
+    a[idx] = errorField;
+  }
+  return a;
 }
 
 function updateCronFieldInternal(
@@ -133,6 +164,18 @@ function updateCronFieldInternal(
   return undefined;
 }
 
+function limitValues(ary: number[] | null | undefined, maxValueNumber: number): string {
+  const avs = ary || [];
+  const mn = maxValueNumber || 30;
+  let st: string;
+  if (avs.length > mn) {
+    st = avs.slice(0, mn).join(", ") + "......";
+  } else {
+    st = avs.join(", ");
+  }
+  return st;
+}
+
 /**
  * 在每一{uname}{separator}
  * 在第{values}{uname}{separator}
@@ -141,7 +184,10 @@ function updateCronFieldInternal(
 function getExpandedValuesInternal(
   idx: number,
   fieldDescription: CronFieldDescription,
-  currentCronValue: string[]
+  currentCronValue: string[],
+  maxValueNumber: number,
+  allTemplate: string,
+  specifiedTemplate: string
 ): { err: boolean; value: string } {
   const cfv = currentCronValue[idx];
   const iname = fieldDescription.iname;
@@ -149,62 +195,58 @@ function getExpandedValuesInternal(
   if (cfv === "?") {
     return { err: false, value: "" };
   } else if (cfv === "*") {
-    return { err: false, value: `在每${iname}${comma}` };
+    return {
+      err: false,
+      value: StrUtil.format(allTemplate, {
+        separator: comma,
+        uname: iname
+      })
+    };
   } else if (cfv.indexOf("-") !== -1) {
-    console.log(cfv);
-    const be = cfv.split("-");
-    console.log(be.length);
-    if (be.length === 2) {
-      const begin: number = parseInt(be[0], 10);
-      const end: number = parseInt(be[1], 10);
-      const ay: number[] = [];
-      console.log(end);
-      for (let i = begin; i <= end; i++) {
-        ay.push(i);
-      }
-      const st = ay.join(", ");
-      return { err: false, value: `在第${st}${iname}${comma}` };
+    const r = parseCronRangeInternal(cfv, idx);
+    if (r.valid) {
+      const st = limitValues(r.allValues, maxValueNumber);
+      return {
+        err: false,
+        value: StrUtil.format(specifiedTemplate, {
+          separator: comma,
+          uname: iname,
+          values: st
+        })
+      };
     } else {
-      console.log(cfv);
-      return { err: true, value: cfv };
+      return { err: true, value: cfv + comma };
     }
   } else if (cfv.indexOf("/") !== -1) {
-    const be = cfv.split("/");
-    if (be.length === 2) {
-      const begin: number = parseInt(be[0], 10);
-      const step: number = parseInt(be[1], 10);
-      const ay: number[] = [];
-      switch (idx) {
-        case 0:
-          for (let i = begin; i < 60; i += step) {
-            ay.push(i);
-          }
-          break;
-        case 1:
-          for (let i = begin; i < 60; i += step) {
-            ay.push(i);
-          }
-          break;
-        case 2:
-          for (let i = begin; i < 24; i += step) {
-            ay.push(i);
-          }
-          break;
-        default:
-          break;
-      }
-      const st = ay.join(", ");
-      return { err: false, value: `在第${st}${iname}${comma}` };
+    const r = parseStepInternal(cfv, idx);
+    if (r.valid) {
+      const st = limitValues(r.allValues, maxValueNumber);
+      return {
+        err: false,
+        value: StrUtil.format(specifiedTemplate, {
+          separator: comma,
+          uname: iname,
+          values: st
+        })
+      };
     } else {
-      return { err: true, value: cfv };
+      return { err: true, value: cfv + comma };
     }
   } else {
-    return { err: false, value: `在第${cfv}${iname}${comma}` };
+    return {
+      err: false,
+      value: StrUtil.format(specifiedTemplate, {
+        separator: comma,
+        uname: iname,
+        values: cfv
+      })
+    };
   }
 }
 
 export let CronBuilderUtil = {
   getExpandedValues: getExpandedValuesInternal,
+  getNewFieldStates: getNewFieldStatesInternal,
   parseCronRange: parseCronRangeInternal,
   parseCronStep: parseStepInternal,
   updateCronFieldValue: updateCronFieldInternal

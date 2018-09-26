@@ -2,14 +2,17 @@ import * as React from "react";
 import CronBuilderPros from "../datashape/cron-builder/cron-builder-props";
 import CronFieldDescription from "../datashape/cron-builder/cron-field-description";
 import PredefinedPattern from "../datashape/cron-builder/predefined-pattern";
-import { CronBuilderUtil } from '../util/cron-builder-util';
+import { CronBuilderUtil } from "../util/cron-builder-util";
 import CronFieldDetail from "./cron-field-detail";
-import CronFieldExplain from './cron-field-explain';
+import CronFieldExplain from "./cron-field-explain";
 import CronFieldInput from "./cron-field-input";
 
 export default class CronBuilder extends React.Component<
   CronBuilderPros,
-  { focusedField: CronFieldDescription; currentCronValue: string[] }
+  {
+    focusedField: CronFieldDescription;
+    currentCronValue: string[];
+  }
 > {
   constructor(props: CronBuilderPros) {
     super(props);
@@ -26,7 +29,16 @@ export default class CronBuilder extends React.Component<
   }
 
   public render() {
-    const cv = this.state.currentCronValue.join(" ");
+    const cva = this.state.currentCronValue;
+    const cv = cva.join(" ");
+
+    const {maxValueNumber, allTemplate, specifiedTemplate} = this.props;
+    const explainedValues = this.props.fieldDescriptions.map((fd, idx) => {
+      return CronBuilderUtil.getExpandedValues(idx, fd, cva, maxValueNumber, allTemplate, specifiedTemplate);
+    });
+
+    const hasError = explainedValues.find(it => it.err) ? true : false;
+
     return (
       <div>
         <form className="pure-form pure-form-stacked">
@@ -49,20 +61,16 @@ export default class CronBuilder extends React.Component<
           </fieldset>
         </form>
         <p>
-          {this.props.fieldDescriptions.map((fd, idx) => (
-            <CronFieldExplain
-              {...fd}
-              idx={idx}
-              currentCronValue={this.state.currentCronValue}
-              key={fd.name}
-            />
+          {explainedValues.map((ev, idx) => (
+            <CronFieldExplain {...ev} key={"explained-" + idx} />
           ))}
         </p>
         <p>
-          <span style={{ fontWeight: "bolder" }}>
+          <span style={{ fontWeight: "bolder", color: hasError ? 'red' : 'blue' }}>
             Cron表达式：
             {cv}
           </span>
+          <button className="pure-button" disabled={hasError}>{this.props.nextTimeLabel}</button>
         </p>
         <form className="pure-form pure-form-stacked">
           <fieldset>
@@ -87,9 +95,13 @@ export default class CronBuilder extends React.Component<
   }
 
   private handleFieldBlur(idx: number, value: string) {
-    const nv = CronBuilderUtil.updateCronFieldValue(idx, value, this.state.currentCronValue);
+    const nv = CronBuilderUtil.updateCronFieldValue(
+      idx,
+      value,
+      this.state.currentCronValue
+    );
     if (nv) {
-      this.setState({ currentCronValue: nv});
+      this.setState({ currentCronValue: nv });
     }
   }
 

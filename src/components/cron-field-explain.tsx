@@ -1,19 +1,18 @@
 import * as React from "react";
-import CronFieldDescription from "../datashape/cron-builder/cron-field-description";
-import { CronBuilderUtil } from '../util/cron-builder-util';
+// import { CronBuilderUtil } from "../util/cron-builder-util";
 
 export default class CronFieldExplain extends React.Component<
-  CronFieldDescription,
+  {err: boolean, value: string},
   {}
 > {
-  constructor(props: CronFieldDescription) {
+  constructor(props: {err: boolean, value: string}) {
     super(props);
   }
 
   public render() {
-    const explained = CronBuilderUtil.getExpandedValues(this.props.idx, this.props, this.props.currentCronValue);
-    const st = explained.err ? { color: "red" } : { color: "blue" };
-    return <span style={st}>{explained.value}</span>;
+    const st = this.props.err ? { color: "red" } : { color: "blue" };
+    const value = this.props.value;
+    // this.props.onFieldExplained(explained.err, this.props.idx);
+    return <span style={st}>{value}</span>;
   }
-
 }
