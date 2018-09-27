@@ -79,12 +79,12 @@ function parseStepInternal(
   }
   const re = /^(\d+)\/(\d+)$/;
   const vs = cfv.match(re);
-  const { max } = getMaxMin(idx);
+  const { max, min } = getMaxMin(idx);
   if (vs) {
     const thisStart = parseInt(vs[1], 10);
     const thisStep = parseInt(vs[2], 10);
     const ay: number[] = [];
-    if (thisStart > max || thisStep > max) {
+    if (thisStart > max || thisStart < min || thisStep > max) {
       return { valid: false };
     }
 

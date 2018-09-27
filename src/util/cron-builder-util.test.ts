@@ -1,9 +1,14 @@
 import { CronBuilderUtil } from "./cron-builder-util";
 
+it ('should handle date.', () => {
+    const d = new Date();
+    const ms = d.getTime();
+    const d1 = new Date(ms);
+    expect(d).toEqual(d1);
+})
 it ('should handle replace.', () => {
     const s = '*/5';
     const ss = s.replace('*/', '0/');
-    console.log(ss);
     expect(ss).toBe('0/5');
 })
 
@@ -60,7 +65,6 @@ it ('should acts like an array.', () => {
     const a10 = [1];
     const a20 = new Array(20);
     a20.splice(0, 0, ...a10);
-    console.log(a20);
 
 
 })
@@ -99,4 +103,8 @@ it('should parse cron step.', () => {
 
     v = CronBuilderUtil.parseCronStep('60/3', 0)
     expect(v.valid).toBeFalsy();
+
+    v = CronBuilderUtil.parseCronStep('1980/20', 6)
+    // const d = new Date();
+    expect(v.allValues).toEqual([2020, 2040, 2060, 2080]);
 });

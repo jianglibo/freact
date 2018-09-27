@@ -8,6 +8,7 @@ export default class CronBuilderPros {
     public maxValueNumber: number,
     public nextTimeLabel: string,
     public allTemplate: string,
-    public specifiedTemplate: string
+    public specifiedTemplate: string,
+    public nextTimeUrl: string
   ) {}
 }
